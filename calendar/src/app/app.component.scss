@@ -1,0 +1,19 @@
+.calendar-days {
+  width: 155px;
+  height: 120px;
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 3px;
+}
+
+.flex-container {
+  display: -webkit-flex;
+  display: flex;
+}
+
+.flex-center {
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+}
