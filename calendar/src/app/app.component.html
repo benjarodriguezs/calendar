@@ -1,27 +1,62 @@
-<div class="flex-container flex-center">
-  <button
-    class="iconsSize ml-1 my-auto"
-    (click)="previousmonth()"
-  >
-    <label>
-      <
-    </label>
-  </button>
-  <h4><b>{{date.format('MMMM ')}}{{date.format('YYYY ')}}</b></h4> 
-  <button
-    class="iconsSize ml-1 my-auto"
-    (click)="nextmonth()"
-  >
-    <label>
-      >
-    </label>
-  </button> 
-</div>
-<div *ngFor="let calendarItem of calendar; let i = index">
-  <div class="flex-container flex-center">
-    <div class="calendar-days" [ngClass]="day.className" *ngFor="let day of calendarItem">
-      <div *ngIf="i === 0">{{day.dayName}}</div>
-      {{day.day}}
+
+<div class="calendar-container">
+  <div class="calendar-data">
+    <div class="header">
+      <h4 class="month"><b>{{date.format('MMMM ')}}{{date.format('YYYY ')}}</b></h4>
+      <div class="arrows">
+        <button class="left-arrow" (click)="previousmonth()"><svg version="1.1" id="Layer_1"
+            xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+            viewBox="0 0 330 330" style="enable-background:new 0 0 330 330;" xml:space="preserve">
+            <path id="XMLID_224_"
+              d="M325.606,229.393l-150.004-150C172.79,76.58,168.974,75,164.996,75c-3.979,0-7.794,1.581-10.607,4.394
+       l-149.996,150c-5.858,5.858-5.858,15.355,0,21.213c5.857,5.857,15.355,5.858,21.213,0l139.39-139.393l139.397,139.393
+       C307.322,253.536,311.161,255,315,255c3.839,0,7.678-1.464,10.607-4.394C331.464,244.748,331.464,235.251,325.606,229.393z" />
+          </svg></button>
+        <button class="right-arrow" (click)="nextmonth()"><svg version="1.1" id="Layer_2"
+          xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+          viewBox="0 0 330 330" style="enable-background:new 0 0 330 330;" xml:space="preserve">
+          <path id="XMLID_224_"
+            d="M325.606,229.393l-150.004-150C172.79,76.58,168.974,75,164.996,75c-3.979,0-7.794,1.581-10.607,4.394
+     l-149.996,150c-5.858,5.858-5.858,15.355,0,21.213c5.857,5.857,15.355,5.858,21.213,0l139.39-139.393l139.397,139.393
+     C307.322,253.536,311.161,255,315,255c3.839,0,7.678-1.464,10.607-4.394C331.464,244.748,331.464,235.251,325.606,229.393z" />
+        </svg></button>
+      </div>
+    </div>
+    <div class="center">
+      <div class="day-container center">
+        <div *ngFor="let calendarItem of calendar; let i = index">
+          <div class="flex-container flex-center">
+            <div *ngFor="let day of calendarItem">
+              <div class="week">
+                <div class="text" *ngIf="i === 0">{{day.dayName}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div *ngFor="let calendarItem of calendar; let i = index">
+      <div class="flex-container flex-center">
+        <div class="calendar-days" [class.weekend]="day.isWeekend" [ngClass]="day.className"
+          *ngFor="let day of calendarItem">
+          <div class="day">
+            {{day.day}}
+          </div>
+
+          <div class="flex-right">
+            <span class="cursor-pointer ml-1 my-auto" id="calendar">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16">
+                <g fill="currentColor">
+                  <path
+                    d="M8 7a.5.5 0 0 1 .5.5V9H10a.5.5 0 0 1 0 1H8.5v1.5a.5.5 0 0 1-1 0V10H6a.5.5 0 0 1 0-1h1.5V7.5A.5.5 0 0 1 8 7z" />
+                  <path
+                    d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z" />
+                </g>
+              </svg>
+            </span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

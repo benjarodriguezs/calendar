@@ -67,21 +67,22 @@ export class AppComponent implements OnInit {
   }
 
   createCalendarItem(data: moment.Moment, className: string) {
-    const dayName = data.format('ddd');
+    const dayName = data.format('dddd');
     return {
       day: data.format('DD'),
       dayName,
       className,
-      isWeekend: dayName === 'Sun' || dayName === 'Sat'
+      isWeekend: dayName === 'Sun' || dayName === 'Sat',
+      outMonth: false,
     };
   }
 
-  public nextmonth() {
+  nextmonth() {
     this.date.add(1,'M');
     this.calendar = this.createCalendar(this.date);
   }
 
-  public previousmonth() {
+  previousmonth() {
     this.date.subtract(1,'M');
     this.calendar = this.createCalendar(this.date);
   }
