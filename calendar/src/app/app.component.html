@@ -41,6 +41,11 @@
           <div class="day">
             {{day.day}}
           </div>
+          <div *ngIf="searchReminder(day.day)" class="message-container">
+            <textarea readonly maxlength="30" class="purple">{{reminder.text}}</textarea>
+            <textarea readonly maxlength="30" class="lightblue">{{reminder.text}}</textarea>
+            <textarea readonly maxlength="30" class="pink">{{reminder.text}}</textarea>
+          </div>
           <div class="flex-right">
             <span 
               class="cursor-pointer ml-1 my-auto"
@@ -70,31 +75,36 @@
   <div class="modal-body col-12">
     <div class="col-9">
       <label for="inputReminder" class="form-label" maxlength="30">Reminder</label>
-      <input type="text" class="form-control" id="inputReminder" placeholder="Max 30 characters">
+      <input
+        type="text"
+        class="form-control"
+        [(ngModel)]="reminderText"
+        id="inputReminder"
+        placeholder="Max 30 characters">
     </div>
     <div class="col-md-9 mt-1">
       <label for="exampleDataList" class="form-label">Choose City</label>
-      <input class="form-control" list="datalistOptions" id="cityList" placeholder="Type to search...">
+      <input
+        class="form-control"
+        [(ngModel)]="cityReminder"
+        list="datalistOptions"
+        id="cityList"
+        placeholder="Type to search...">
       <datalist id="datalistOptions">
         <div *ngFor="let city of cities; let j = index">
           <option>{{city.name}}</option>
         </div>
       </datalist>
     </div>
-    <div class="col-9 mt-1">
-      <p><small>City</small></p>
-      <input
-        type="text"
-        class="form-control form-control-sm">
-    </div>
     <div class="col-md-9">
       <label for="exampleDataList" class="form-label">Choose Color</label>
-      <input class="form-control" list="colorListOption" id="colorList" placeholder="Type to search...">
-      <datalist id="colorListOption">
-        <div *ngFor="let color of colors; let i = index">
-          <option>{{color.name}}</option>
-        </div>
-      </datalist>
+      <select class="form-select" aria-label="Default select example" [(ngModel)]="colorReminder">
+        <option selected placeholder="Color"></option>
+        <option value="1">purple</option>
+        <option value="2">lightblue</option>
+        <option value="3">pink</option>
+        <option value="4">green</option>
+      </select>
     </div>
   </div>
   <div class="modal-footer">

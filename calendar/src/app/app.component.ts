@@ -1,6 +1,7 @@
-import { Component, OnInit, TemplateRef } from '@angular/core';
+import { Component, OnInit, TemplateRef, ElementRef } from '@angular/core';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import * as moment from 'moment';
+import { HttpClient } from '@angular/common/http';
 import { Country, State, City }  from 'country-state-city';
 
 interface CalendarItem {
@@ -9,6 +10,7 @@ interface CalendarItem {
   className: string;
   isWeekend: boolean;
 }
+
 
 @Component({
   selector: 'app-root',
@@ -21,13 +23,20 @@ export class AppComponent implements OnInit {
   calendar: Array<CalendarItem[]> = [];
   outday: boolean = false;
   modalRef: BsModalRef | undefined;
-  // cities: Array<CityItem[]> = [];
   cities: any;
-  colors: any = [{name: 'red'}, {name: 'blue'}, {name: 'yellow'}, {name: 'green'}, {name: 'lightblue'}]
+  colors: any = [{name: 'purple'}, {name: 'pink'}, {name: 'lightblue'}, {name: 'green'}]
   example: any;
+  reminder: any;
+  reminderText: string = ''
+  cityReminder: string = ''
+  day: any;
+  colorReminder: string = '';
+  
 
   constructor(
     private modalService: BsModalService,
+    private http: HttpClient,
+    private input: ElementRef,
   ) { }
 
   ngOnInit(): void {
@@ -99,8 +108,8 @@ export class AppComponent implements OnInit {
 
   openModal(template: TemplateRef<any>, calendar: CalendarItem) {
     this.searchCities();
-    let day = calendar;
-    console.log(day);
+    this.day = calendar;
+    console.log(this.day);
     this.modalRef = this.modalService.show(template);
   }
 
@@ -117,6 +126,28 @@ export class AppComponent implements OnInit {
   }
 
   addReminder() {
+    this.reminder = {day: this.day, text: this.reminderText, color: this.colorReminder, city: this.cityReminder}
+    console.log(this.reminder)
+    localStorage.setItem(this.day.day, JSON.stringify(this.reminder));
+    this.modalService.hide();
   }
 
+  getWeather(lat: string, lon: string){
+    console.log(lat)
+    let key = 'a332cb01f520e8569dca055037d9ecff';
+    let url = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&appid=${key}`
+    this.example = this.http.get<any>(url).toPromise();
+  }
+
+  searchReminder(day: any) {
+    if (this.reminder === undefined) {
+      return false;
+    }
+    if (localStorage.getItem(day) !== null) {
+      // this.getWeather(this.reminder.latitude, this.reminder.longitude)
+      return true
+  } else {
+      return false;
+  }
+  }
 }
