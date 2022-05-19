@@ -1,5 +1,7 @@
-import { Component, OnInit, NgModule } from '@angular/core';
+import { Component, OnInit, TemplateRef } from '@angular/core';
+import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import * as moment from 'moment';
+import { Country, State, City }  from 'country-state-city';
 
 interface CalendarItem {
   day: string;
@@ -17,9 +19,16 @@ interface CalendarItem {
 export class AppComponent implements OnInit {
   date = moment();
   calendar: Array<CalendarItem[]> = [];
+  outday: boolean = false;
+  modalRef: BsModalRef | undefined;
+  // cities: Array<CityItem[]> = [];
+  cities: any;
+  colors: any = [{name: 'red'}, {name: 'blue'}, {name: 'yellow'}, {name: 'green'}, {name: 'lightblue'}]
+  example: any;
 
-
-  constructor() { }
+  constructor(
+    private modalService: BsModalService,
+  ) { }
 
   ngOnInit(): void {
     this.calendar = this.createCalendar(this.date);
@@ -48,11 +57,13 @@ export class AppComponent implements OnInit {
     for (let i = 0; i < daysInMonth; i++) {
       calendar.push(this.createCalendarItem(clone, 'in-month'));
       clone.add(1, 'days');
+      this.outday = true;
     }
 
     for (let i = 0; i < daysAfter; i++) {
       calendar.push(this.createCalendarItem(clone, 'next-month'));
       clone.add(1, 'days');
+      this.outday = true;
     }
 
 
@@ -72,8 +83,7 @@ export class AppComponent implements OnInit {
       day: data.format('DD'),
       dayName,
       className,
-      isWeekend: dayName === 'Sun' || dayName === 'Sat',
-      outMonth: false,
+      isWeekend: dayName === 'Sunday' || dayName === 'Saturday'
     };
   }
 
@@ -85,6 +95,28 @@ export class AppComponent implements OnInit {
   previousmonth() {
     this.date.subtract(1,'M');
     this.calendar = this.createCalendar(this.date);
+  }
+
+  openModal(template: TemplateRef<any>, calendar: CalendarItem) {
+    this.searchCities();
+    let day = calendar;
+    console.log(day);
+    this.modalRef = this.modalService.show(template);
+  }
+
+  searchCities() {
+    // this.cities = City.getAllCities();
+    this.cities = [
+    {name: 'Andorra la Vella', latitude: '42.50779000', longitude: '1.52109000'},
+    {name: 'Arinsal', latitude: '42.57205000', longitude: '1.48453000'},
+    {name: 'Canillo', latitude: '42.56760000', longitude: '1.59756000'}]
+  }
+
+  closeModal() {
+    this.modalService.hide();
+  }
+
+  addReminder() {
   }
 
 }
