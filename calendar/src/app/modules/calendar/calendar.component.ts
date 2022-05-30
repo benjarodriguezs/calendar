@@ -51,10 +51,8 @@ export class CalendarComponent implements OnInit {
     let endOfMonth = month.endOf('months').format('ddd');
     let weekdaysShort = moment.weekdaysShort();
     let calendar: CalendarItem[] = [];
-
     let daysBefore = weekdaysShort.indexOf(startOfMonth);
     let daysAfter = weekdaysShort.length - 1 - weekdaysShort.indexOf(endOfMonth);
-
     let clone = month.startOf('months').clone();
     if (daysBefore > 0) {
       clone.subtract(daysBefore, 'days');
