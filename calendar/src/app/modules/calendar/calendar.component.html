@@ -41,7 +41,7 @@
           <div class="day">
             {{day.day}}
           </div>
-          <div *ngIf="searchReminder(day.day, day.month)" class="message-container">
+          <div *ngIf="searchReminder(day.day, day.month)" class="message-container" (click)="openModal(template, day)">
             <div *ngIf="reminders.get(day.day+day.month).color == 1">
               <textarea readonly maxlength="30" class="purple">{{reminders.get(day.day+day.month).text}}</textarea>
             </div>
@@ -115,8 +115,19 @@
         <option value="4">green</option>
       </select>
     </div>
+    <div class="col-md-9 mt-2">
+      <div *ngIf="weatherBoolean">
+        <h4>{{weatherCondition}}</h4>
+      </div>
+    </div>
   </div>
   <div class="modal-footer">
+    <div *ngIf="searchReminder(day.day, day.month)">
+      <button class="btn btn-sm btn-danger" (click)="removeReminder()">Remove</button>
+    </div>
+    <div *ngIf="cityReminder">
+      <button class="btn btn-sm btn-info" (click)="checkWeather()">Check Weather</button>
+    </div>
     <button class="btn btn-sm btn-secondary" (click)="closeModal()">Cancelar</button>
     <button class="btn btn-sm btn-primary"(click)="addReminder()">Add Reminder</button>
   </div>

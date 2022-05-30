@@ -1,8 +1,8 @@
 import { Component, OnInit, TemplateRef, ElementRef } from '@angular/core';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import * as moment from 'moment';
-import { HttpClient } from '@angular/common/http';
 import { Country, State, City }  from 'country-state-city';
+import { WeatherService } from 'src/app/services/weather.service';
 
 
 interface CalendarItem {
@@ -32,10 +32,13 @@ export class CalendarComponent implements OnInit {
   day: any;
   colorReminder: string = '';
   reminders = new Map();
+  cityWeather: any;
+  weatherCondition: any;
+  weatherBoolean: boolean = false;
 
   constructor(
     private modalService: BsModalService,
-    private http: HttpClient,
+    private weatherService: WeatherService,
   ) { }
 
   ngOnInit(): void {
@@ -118,7 +121,10 @@ export class CalendarComponent implements OnInit {
     this.cities = [
     {name: 'Andorra la Vella', latitude: '42.50779000', longitude: '1.52109000'},
     {name: 'Arinsal', latitude: '42.57205000', longitude: '1.48453000'},
-    {name: 'Canillo', latitude: '42.56760000', longitude: '1.59756000'}]
+    {name: 'Canillo', latitude: '42.56760000', longitude: '1.59756000'},
+    {name: 'Bezouce', latitude: '43.88229000', longitude: '4.49072000'},
+    {name: 'El Palmito', latitude: '19.91733000', longitude: '-99.68127000'}
+    ]
   }
 
   closeModal() {
@@ -132,10 +138,31 @@ export class CalendarComponent implements OnInit {
     this.modalService.hide();
   }
 
+  removeReminder() {
+    let key = this.day.day.concat('',this.day.month);
+    this.reminders.delete(key);
+    this.modalService.hide();
+  }
+
+  checkWeather() {
+    let lat;
+    let lon;
+    for (let i=0; i<this.cities.length; i++) {
+      if (this.cities[i].name === this.cityReminder) {
+        lat = this.cities[i].latitude;
+        lon = this.cities[i].longitude;
+        this.getWeather(lat, lon)
+      }
+    }
+  }
+
   getWeather(lat: string, lon: string){
-    let key = 'a332cb01f520e8569dca055037d9ecff';
-    let url = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&appid=${key}`
-    this.example = this.http.get<any>(url).toPromise();
+    this.weatherService.getWeather(lat, lon)
+      .subscribe((res: any) => {
+        this.weatherBoolean = true;
+        this.weatherCondition = res.current.weather[0].main;
+        this.cityWeather = res;
+      }, err => console.error(err));
   }
 
   searchReminder(day: any, month:any) {
@@ -144,11 +171,14 @@ export class CalendarComponent implements OnInit {
       return false;
     }
     if (this.reminders.get(key) !== null) {
-      // this.getWeather(this.reminder.latitude, this.reminder.longitude)
+      this.searchCityUbication(key);
       return true
   } else {
       return false;
   }
   }
 
+  searchCityUbication(key: any) {
+    let city = this.reminders.get(key).city
+  }
 }
