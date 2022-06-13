@@ -158,8 +158,9 @@ export class CalendarComponent implements OnInit {
   }
 
   removeReminder() {
-    let key = this.day.day.concat('',this.day.month);
+    let key = this.day.day.concat('-',this.day.month);
     this.reminders.delete(key);
+    this.resetValues();
     this.modalService.hide();
   }
 

@@ -124,6 +124,8 @@
     <div *ngIf="editBoolean">
       <button class="btn btn-sm btn-primary"(click)="editReminder()">Edit Reminder</button>
     </div>
-    <button class="btn btn-sm btn-primary"(click)="addReminder()">Add Reminder</button>
+    <div *ngIf="!editBoolean">
+      <button class="btn btn-sm btn-primary"(click)="addReminder()">Add Reminder</button>
+    </div>
   </div>
 </ng-template>
