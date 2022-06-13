@@ -90,11 +90,11 @@
         list="datalistOptions"
         id="cityList"
         placeholder="Type to search...">
-      <datalist id="datalistOptions">
+      <!-- <datalist id="datalistOptions">
         <div *ngFor="let city of cities; let j = index">
           <option>{{city.name}}</option>
         </div>
-      </datalist>
+      </datalist> -->
     </div>
     <div class="col-md-9">
       <label for="exampleDataList" class="form-label">Choose Color</label>
@@ -118,7 +118,7 @@
       <button class="btn btn-sm btn-danger" (click)="removeReminder()">Remove</button>
     </div>
     <div *ngIf="cityReminder">
-      <button class="btn btn-sm btn-info" (click)="checkWeather()">Check Weather</button>
+      <button class="btn btn-sm btn-info" (click)="checkWeather(cityReminder)">Check Weather</button>
     </div>
     <button class="btn btn-sm btn-secondary" (click)="closeModal()">Cancel</button>
     <div *ngIf="editBoolean">

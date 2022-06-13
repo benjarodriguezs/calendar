@@ -1,7 +1,6 @@
 import { Component, OnInit, TemplateRef, ElementRef } from '@angular/core';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import * as moment from 'moment';
-import { Country, State, City }  from 'country-state-city';
 import { WeatherService } from 'src/app/services/weather.service';
 import { ICalendarItem } from 'src/app/interfaces/calendar'
 
@@ -37,7 +36,6 @@ export class CalendarComponent implements OnInit {
 
   ngOnInit(): void {
     this.calendar = this.createCalendar(this.date);
-    this.searchCities();
   }
 
   createCalendar(month: moment.Moment) {
@@ -69,7 +67,6 @@ export class CalendarComponent implements OnInit {
       clone.add(1, 'days');
       this.outday = true;
     }
-
 
     return calendar.reduce((pre: Array<ICalendarItem[]>, curr: ICalendarItem) => {
       if (pre[pre.length - 1].length < weekdaysShort.length) {
@@ -107,12 +104,8 @@ export class CalendarComponent implements OnInit {
     this.modalRef = this.modalService.show(template);
   }
 
-  searchCities() {
-    //Delete the slice method to get all cities
-    this.cities = City.getAllCities().slice(0, 2500);
-  }
-
   closeModal() {
+    this.resetValues();
     this.modalService.hide();
   }
 
@@ -164,27 +157,15 @@ export class CalendarComponent implements OnInit {
     this.modalService.hide();
   }
 
-  checkWeather() {
-    let lat;
-    let lon;
-    for (let i=0; i<this.cities.length; i++) {
-      if (this.cities[i].name === this.cityReminder) {
-        lat = this.cities[i].latitude;
-        lon = this.cities[i].longitude;
-        this.getWeather(lat, lon)
-      }
-    }
-  }
-
-  getWeather(lat: string, lon: string){
-    this.weatherService.getWeather(lat, lon)
+  checkWeather(city: any) {
+    this.weatherService.getWeather(city)
       .subscribe((res: any) => {
         this.weatherBoolean = true;
-        this.weatherTemp = res.current.temp;
-        this.weatherCondition = res.current.weather[0].main;
+        this.weatherTemp = res.main.temp;
+        this.weatherCondition = res.weather[0].main;
         this.cityWeather = res;
       }, err => console.error(err));
-  }
+    }
 
   searchReminder(day: any, month:any) {
     let key = day.concat('-' ,month);
@@ -192,15 +173,10 @@ export class CalendarComponent implements OnInit {
       return false;
     }
     if (this.reminders.get(key) !== null) {
-      this.searchCityUbication(key);
       return true
   } else {
       return false;
   }
-  }
-
-  searchCityUbication(key: any) {
-    let city = this.reminders.get(key).city
   }
 
   editState() {
