@@ -108,7 +108,8 @@ export class CalendarComponent implements OnInit {
   }
 
   searchCities() {
-    this.cities = City.getAllCities().slice(0, 1000);
+    //Delete the slice method to get all cities
+    this.cities = City.getAllCities().slice(0, 2500);
   }
 
   closeModal() {
