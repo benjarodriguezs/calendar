@@ -1,18 +1,20 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { APP_SETTINGS } from '../../../etc/AppSettings';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WeatherService {
+  key: string = APP_SETTINGS.key;
+  urlAPI: string = APP_SETTINGS.url;
 
   constructor(
     private http: HttpClient,
   ) { }
 
   getWeather(city: any) {
-    let key = 'a332cb01f520e8569dca055037d9ecff';
-    let url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${key}`
+    let url = `${this.urlAPI}weather?q=${city}&units=metric&appid=${this.key}`
     return this.http.get<any>(url)
   }
 }
