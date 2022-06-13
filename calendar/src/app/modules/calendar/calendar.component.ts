@@ -3,15 +3,7 @@ import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import * as moment from 'moment';
 import { Country, State, City }  from 'country-state-city';
 import { WeatherService } from 'src/app/services/weather.service';
-
-
-interface CalendarItem {
-  day: string;
-  dayName: string;
-  month: string;
-  className: string;
-  isWeekend: boolean;
-}
+import { ICalendarItem } from 'src/app/interfaces/calendar'
 
 @Component({
   selector: 'app-calendar',
@@ -20,7 +12,7 @@ interface CalendarItem {
 })
 export class CalendarComponent implements OnInit {
   date = moment();
-  calendar: Array<CalendarItem[]> = [];
+  calendar: Array<ICalendarItem[]> = [];
   outday: boolean = false;
   modalRef: BsModalRef | undefined;
   cities: any;
@@ -34,7 +26,9 @@ export class CalendarComponent implements OnInit {
   reminders = new Map();
   cityWeather: any;
   weatherCondition: any;
+  weatherTemp: any;
   weatherBoolean: boolean = false;
+  editBoolean: boolean = false;
 
   constructor(
     private modalService: BsModalService,
@@ -43,6 +37,7 @@ export class CalendarComponent implements OnInit {
 
   ngOnInit(): void {
     this.calendar = this.createCalendar(this.date);
+    this.searchCities();
   }
 
   createCalendar(month: moment.Moment) {
@@ -50,7 +45,7 @@ export class CalendarComponent implements OnInit {
     let startOfMonth = month.startOf('months').format('ddd');
     let endOfMonth = month.endOf('months').format('ddd');
     let weekdaysShort = moment.weekdaysShort();
-    let calendar: CalendarItem[] = [];
+    let calendar: ICalendarItem[] = [];
     let daysBefore = weekdaysShort.indexOf(startOfMonth);
     let daysAfter = weekdaysShort.length - 1 - weekdaysShort.indexOf(endOfMonth);
     let clone = month.startOf('months').clone();
@@ -76,7 +71,7 @@ export class CalendarComponent implements OnInit {
     }
 
 
-    return calendar.reduce((pre: Array<CalendarItem[]>, curr: CalendarItem) => {
+    return calendar.reduce((pre: Array<ICalendarItem[]>, curr: ICalendarItem) => {
       if (pre[pre.length - 1].length < weekdaysShort.length) {
         pre[pre.length - 1].push(curr);
       } else {
@@ -107,22 +102,13 @@ export class CalendarComponent implements OnInit {
     this.calendar = this.createCalendar(this.date);
   }
 
-  openModal(template: TemplateRef<any>, calendar: CalendarItem) {
-    this.searchCities();
+  openModal(template: TemplateRef<any>, calendar: ICalendarItem) {
     this.day = calendar;
     this.modalRef = this.modalService.show(template);
   }
 
   searchCities() {
-    // Uncomment the following line to get all the cities of the world
-    // this.cities = City.getAllCities();
-    this.cities = [
-    {name: 'Andorra la Vella', latitude: '42.50779000', longitude: '1.52109000'},
-    {name: 'Arinsal', latitude: '42.57205000', longitude: '1.48453000'},
-    {name: 'Canillo', latitude: '42.56760000', longitude: '1.59756000'},
-    {name: 'Bezouce', latitude: '43.88229000', longitude: '4.49072000'},
-    {name: 'El Palmito', latitude: '19.91733000', longitude: '-99.68127000'}
-    ]
+    this.cities = City.getAllCities().slice(0, 1000);
   }
 
   closeModal() {
@@ -130,9 +116,43 @@ export class CalendarComponent implements OnInit {
   }
 
   addReminder() {
-    let key = this.day.day.concat('',this.day.month);
+    let key = this.day.day.concat('-',this.day.month);
     this.reminder = {day: this.day.day, text: this.reminderText, month: this.day.month, color: this.colorReminder, city: this.cityReminder}
-    this.reminders.set(key,this.reminder)
+    let remindersInDay = this.reminders.get(key);
+    if (remindersInDay === undefined){
+      this.reminders.set(key, [this.reminder])
+    } else {
+      remindersInDay.push(this.reminder)
+      this.reminders.set(key, remindersInDay);
+    }
+    this.resetValues();
+    this.modalService.hide();
+  }
+
+  getReminderForDay(day:string, month:string){
+    return this.reminders.get(day + "-" + month);
+  }
+
+  resetValues() {
+    this.reminderText = '';
+    this.colorReminder = '';
+    this.cityReminder = '';
+    this.weatherBoolean = false;
+    this.editBoolean = false;
+  }
+
+  editReminder() {
+    let key = this.day.day.concat('-',this.day.month);
+    this.reminders.delete(key);
+    this.reminder = {day: this.day.day, text: this.reminderText, month: this.day.month, color: this.colorReminder, city: this.cityReminder}
+    let remindersInDay = this.reminders.get(key);
+    if (remindersInDay === undefined){
+      this.reminders.set(key, [this.reminder])
+    } else {
+      remindersInDay.push(this.reminder)
+      this.reminders.set(key, remindersInDay);
+    }
+    this.resetValues();
     this.modalService.hide();
   }
 
@@ -158,13 +178,14 @@ export class CalendarComponent implements OnInit {
     this.weatherService.getWeather(lat, lon)
       .subscribe((res: any) => {
         this.weatherBoolean = true;
+        this.weatherTemp = res.current.temp;
         this.weatherCondition = res.current.weather[0].main;
         this.cityWeather = res;
       }, err => console.error(err));
   }
 
   searchReminder(day: any, month:any) {
-    let key = day.concat('',month);
+    let key = day.concat('-' ,month);
     if (this.reminders.get(key) === undefined) {
       return false;
     }
@@ -178,5 +199,9 @@ export class CalendarComponent implements OnInit {
 
   searchCityUbication(key: any) {
     let city = this.reminders.get(key).city
+  }
+
+  editState() {
+    this.editBoolean = true;
   }
 }

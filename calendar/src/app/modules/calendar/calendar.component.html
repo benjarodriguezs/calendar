@@ -34,25 +34,16 @@
         </div>
       </div>
     </div>
-    <div *ngFor="let calendarItem of calendar; let i = index">
+    <div *ngFor="let calendarItem of calendar">
       <div class="flex-container flex-center">
         <div class="calendar-days" [ngClass]="day.className" [class.weekend]="day.isWeekend" 
           *ngFor="let day of calendarItem">
           <div class="day">
             {{day.day}}
           </div>
-          <div *ngIf="searchReminder(day.day, day.month)" class="message-container" (click)="openModal(template, day)">
-            <div *ngIf="reminders.get(day.day+day.month).color == 1">
-              <textarea readonly maxlength="30" class="purple">{{reminders.get(day.day+day.month).text}}</textarea>
-            </div>
-            <div *ngIf="reminders.get(day.day+day.month).color == 2">
-              <textarea readonly maxlength="30" class="lightblue">{{reminders.get(day.day+day.month).text}}</textarea>
-            </div>
-            <div *ngIf="reminders.get(day.day+day.month).color == 3">
-              <textarea readonly maxlength="30" class="pink">{{reminders.get(day.day+day.month).text}}</textarea>
-            </div>
-            <div *ngIf="reminders.get(day.day+day.month).color == 4">
-              <textarea readonly maxlength="30" class="green">{{reminders.get(day.day+day.month).text}}</textarea>
+          <div *ngIf="searchReminder(day.day, day.month)" class="message-container" (click)="openModal(template, day)" (click)="editState()">
+            <div *ngFor="let reminder of getReminderForDay(day.day, day.month)">
+              <textarea readonly maxlength="30" [ngClass]="reminder.color"> {{reminder.text}} </textarea>
             </div>
           </div>
           <div class="flex-right">
@@ -109,15 +100,16 @@
       <label for="exampleDataList" class="form-label">Choose Color</label>
       <select class="form-select" aria-label="Default select example" [(ngModel)]="colorReminder">
         <option selected placeholder="Color"></option>
-        <option value="1">purple</option>
-        <option value="2">lightblue</option>
-        <option value="3">pink</option>
-        <option value="4">green</option>
+        <option value="purple">purple</option>
+        <option value="blue">blue</option>
+        <option value="orange">orange</option>
+        <option value="green">green</option>
       </select>
     </div>
     <div class="col-md-9 mt-2">
       <div *ngIf="weatherBoolean">
-        <h4>{{weatherCondition}}</h4>
+        <h4>Temp: {{weatherTemp}} ºC</h4>
+        <h4>Weather: {{weatherCondition}}</h4>
       </div>
     </div>
   </div>
@@ -128,7 +120,10 @@
     <div *ngIf="cityReminder">
       <button class="btn btn-sm btn-info" (click)="checkWeather()">Check Weather</button>
     </div>
-    <button class="btn btn-sm btn-secondary" (click)="closeModal()">Cancelar</button>
+    <button class="btn btn-sm btn-secondary" (click)="closeModal()">Cancel</button>
+    <div *ngIf="editBoolean">
+      <button class="btn btn-sm btn-primary"(click)="editReminder()">Edit Reminder</button>
+    </div>
     <button class="btn btn-sm btn-primary"(click)="addReminder()">Add Reminder</button>
   </div>
 </ng-template>
